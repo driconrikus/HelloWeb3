@@ -1,11 +1,3 @@
-locals {
-  project_id = "YOUR_PROJECT_ID"
-  region     = "YOUUR_REGION"
-  default_labels = {
-    managed-by = "terraform"
-  }
-}
-
 terraform {
   required_version = "~> 1.5"
   required_providers {
@@ -16,19 +8,20 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "YOUR_BUCKET"
+    bucket = "helloweb3"
+    prefix = "terraform/state"
   }
 }
 
 
 provider "google" {
-  project = local.project_id
-  region  = local.region
+  project = var.project_id
+  region  = var.region
 }
 
 provider "google-beta" {
-  project = local.project_id
-  region  = local.region
+  project = var.project_id
+  region  = var.region
 }
 
 data "google_project" "this" {}
