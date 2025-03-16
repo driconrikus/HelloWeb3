@@ -41,6 +41,7 @@ service:
   port: 3000
   targetPort: 8080
   annotations:
+    networking.gke.io/load-balancer-type: "External"
     prometheus.io/scrape: "true"
     prometheus.io/port: "3000"
     prometheus.io/path: "/metrics"
