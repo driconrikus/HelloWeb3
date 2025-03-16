@@ -1,3 +1,8 @@
-FROM node:alpine3.17
+FROM node:21.0-alpine3.17
 
-#Finish remaining steos in order to successfully build Docker-image
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "app.js"]
