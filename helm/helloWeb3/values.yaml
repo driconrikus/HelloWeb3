@@ -8,7 +8,7 @@ image:
   repository: us-central1-docker.pkg.dev/marine-storm-453819-c3/hello-web3/hello-web3:latest
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1"
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: "helloweb3"
