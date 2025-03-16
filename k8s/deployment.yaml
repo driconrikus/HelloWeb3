@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-web3
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-web3
+  template:
+    metadata:
+      labels:
+        app: hello-web3
+    spec:
+      containers:
+        - name: hello-web3
+          image: us-central1-docker.pkg.dev/marine-storm-453819-c3/hello-web3/hello-web3:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "256mi"
+            limits:
+              cpu: "1"
+              memory: "512mi"

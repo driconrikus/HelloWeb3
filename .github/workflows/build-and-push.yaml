@@ -24,11 +24,13 @@ jobs:
           docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest" .
           docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest"
 
+      - name: Get GKE Credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+          --region us-central1 \
+          --project ${{ secrets.GCP_PROJECT }}
+  
       - name: Deploy to GKE
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: hello-web3
-          image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest
-          cluster_name: helloweb3-cluster
-          location: us-central1
-          credentials: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          kubectl apply -f k8s/
+          kubectl set image deployment/hello-web3 hello-web3=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/hello-web3/hello-web3:latest
