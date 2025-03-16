@@ -21,7 +21,7 @@ module "iam" {
 
   create_github_actions_sa     = true
   github_actions_account_id    = "gha-deployer"  # Unique ID to avoid conflicts
-  github_actions_roles         = ["roles/container.developer", "roles/storage.admin", "roles/artifactregistry.writer"]
+  github_actions_roles         = ["roles/container.developer", "roles/storage.admin", "roles/artifactregistry.writer", "roles/container.developer"]
   generate_github_actions_key  = true  # Only for testing; disable in productio
 }
 
