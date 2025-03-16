@@ -21,8 +21,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3:latest" .
-          docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3:latest"
+          docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest" .
+          docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest"
 
       - name: Deploy to GKE
         uses: google-github-actions/deploy-cloudrun@v1
