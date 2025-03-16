@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helloWeb3.fullname" . }}
+  name: {{ include "helloweb3.fullname" . }}
   labels:
-    {{- include "helloWeb3.labels" . | nindent 4 }}
+    {{- include "helloweb3.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "helloWeb3.selectorLabels" . | nindent 6 }}
+      {{- include "helloweb3.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "helloWeb3.selectorLabels" . | nindent 8 }}
+        {{- include "helloweb3.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "helloWeb3.serviceAccountName" . }}
+      serviceAccountName: {{ include "helloweb3.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
