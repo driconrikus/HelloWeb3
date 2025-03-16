@@ -28,7 +28,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: hello-web3
-          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/hello-web3:main-${{ steps.sha.outputs.short_sha }}
-          cluster_name: blockchain-cluster
+          image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest
+          cluster_name: helloweb3-cluster
           location: us-central1
           credentials: ${{ secrets.GCP_SA_KEY }}
