@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helloweb3.fullname" . }}
+  name: {{ include "helloWeb3.fullname" . }}
   labels:
-    {{- include "helloweb3.labels" . | nindent 4 }}
+    {{- include "helloWeb3.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "helloweb3.selectorLabels" . | nindent 6 }}
+      {{- include "helloWeb3.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "helloweb3.selectorLabels" . | nindent 8 }}
+        {{- include "helloWeb3.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "helloweb3.serviceAccountName" . }}
+      serviceAccountName: {{ include "helloWeb3.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -35,16 +35,14 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.deployment.containerPort }}
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          env:
+            - name: {{ .Values.secret.secretKeyVariableName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.secretKeyRefName }}
+                  key: {{ .Values.secret.secretKeyVariableName }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
