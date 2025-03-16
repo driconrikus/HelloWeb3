@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: us-central1-docker.pkg.dev/marine-storm-453819-c3/hello-web3/hello-web3
+  repository: us-central1-docker.pkg.dev/marine-storm-453819-c3/hello-web3/hello-web3 
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -27,11 +27,21 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
+podAnnotations:
+   prometheus.io/scrape: "true"
+   prometheus.io/port: "3000"
+   prometheus.io/path: "/metrics"
 
-podSecurityContext: {}
+podSecurityContext:
+   fsGroup: 2000
 
-securityContext: {}
+securityContext:
+   capabilities:
+     drop:
+     - ALL
+   readOnlyRootFilesystem: true
+   runAsNonRoot: true
+   runAsUser: 1000
 
 deployment:
   containerPort: 8080
@@ -39,12 +49,12 @@ deployment:
 service:
   type: ClusterIP #LoadBalancer
   port: 3000
-  targetPort: 8080
+  targetPort: 8080 #http #8080
   annotations:
-    networking.gke.io/load-balancer-type: "External"
     prometheus.io/scrape: "true"
     prometheus.io/port: "3000"
     prometheus.io/path: "/metrics"
+    cloud.google.com/load-balancer-type: "External"
 
 ingress:
   enabled: true
@@ -52,6 +62,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "cert-manager-global"  # ClusterIssuer name
     kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
   hosts:
     - host: "*.rvhelloweb3.com"
       paths:
@@ -87,6 +98,7 @@ grafana:
     annotations:
       cert-manager.io/cluster-issuer: "cert-manager-global"  # ClusterIssuer name
       kubernetes.io/ingress.class: "nginx"
+      kubernetes.io/tls-acme: "true"
     hosts:
       - host: "*.grafana.rvhelloweb3.com"
         paths:
@@ -109,7 +121,7 @@ grafana:
     tls: 
     - secretName: cert-manager-private-key
       hosts:
-        - grafana.rvhelloweb3.com
+        - grafana.helloweb3.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -128,9 +140,22 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+# Prometheus & Grafana
+metrics:
+   enabled: true
+   service:
+     annotations:
+       prometheus.io/scrape: "true"
+       prometheus.io/port: "3000"
+       prometheus.io/path: "/metrics"
+     type: LoadBalancer
+     port: 3000
+     targetPort: 3000
