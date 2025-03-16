@@ -25,8 +25,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t "gcr.io/${{ secrets.GCP_PROJECT_ID }}/hello-web3:main-${{ steps.sha.outputs.short_sha }}" .
-          docker push "gcr.io/${{ secrets.GCP_PROJECT_ID }}/hello-web3:main-${{ steps.sha.outputs.short_sha }}"
+          docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3-${{ steps.sha.outputs.short_sha }}" .
+          docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3-${{ steps.sha.outputs.short_sha }}"
 
       - name: Deploy to GKE
         uses: google-github-actions/deploy-cloudrun@v1
