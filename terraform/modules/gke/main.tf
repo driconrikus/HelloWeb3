@@ -11,4 +11,16 @@ resource "google_container_cluster" "cluster" {
       machine_type = var.machine_type
     }
   }
+
+  cluster_autoscaling {
+    enabled = true
+    resource_limits {
+      resource_type = "cpu"
+      maximum = 2 # Max cores per node
+    }
+    resource_limits {
+      resource_type = "memory"
+      maximum = 4
+    }
+  }
 }

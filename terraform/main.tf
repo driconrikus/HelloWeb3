@@ -10,7 +10,7 @@ module "gke" {
   region       = "us-central1"
   vpc_network  = module.vpc.vpc_id       # Pass VPC ID from the VPC module
   subnet_name  = module.vpc.subnet_name  # Pass subnet name from the VPC module
-  machine_type = "e2-medium"
+  machine_type = "e2-standard-2"
 }
 
 # Create read-only IAM user for Kubernetes
@@ -18,10 +18,10 @@ module "iam" {
   source     = "./modules/iam"
   project_id = var.project_id
   user_email = "gothrickz@gmail.com"  # Replace with user email
-
+  depends_on = [module.gke]
   create_github_actions_sa     = true
   github_actions_account_id    = "gha-deployer"  # Unique ID to avoid conflicts
-  github_actions_roles         = ["roles/container.developer", "roles/storage.admin", "roles/artifactregistry.writer", "roles/container.developer"]
+  github_actions_roles         = ["roles/container.developer", "roles/storage.admin", "roles/artifactregistry.writer"]
   generate_github_actions_key  = true  # Only for testing; disable in productio
 }
 
