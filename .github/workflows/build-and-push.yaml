@@ -50,6 +50,5 @@ jobs:
         run: |
           helm upgrade --install helloweb3 ./helm/helloWeb3 \
           --namespace helloweb3 \
-          --set image.tag=$GITHUB_SHA \
           --set secret.secretKeyRefName=polygon-api-key \
           --timeout 5m0s
