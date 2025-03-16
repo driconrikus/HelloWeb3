@@ -80,7 +80,7 @@ grafana:
   namespace: monitoring
   port: 80
   ingress:
-    name: grafana-ingress
+    name: grafana
     enabled: true
     className: "nginx"
     annotations:
