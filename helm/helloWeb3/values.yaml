@@ -1,18 +1,22 @@
-# Default values for helloWeb3.
+# Default values for
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: us-central1-docker.pkg.dev/marine-storm-453819-c3/hello-web3/hello-web3:latest
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v1"
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: "helloweb3"
+fullnameOverride: "helloweb3"
+
+secret:
+  secretKeyRefName: polygon-api-key
+  secretKeyVariableName: "POLYGON_API_KEY"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -26,35 +30,85 @@ serviceAccount:
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+
+deployment:
+  containerPort: 8080
 
 service:
-  type: ClusterIP
-  port: 80
+  type: ClusterIP #LoadBalancer
+  port: 3000
+  targetPort: 8080
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3000"
+    prometheus.io/path: "/metrics"
 
 ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "cert-manager-global"  # ClusterIssuer name
+    kubernetes.io/ingress.class: "nginx"
   hosts:
-    - host: chart-example.local
+    - host: "*.rvhelloweb3.com"
       paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: helloweb3
+            port:
+              number: 3000
+    - host: rvhelloweb3.com
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: helloweb3
+            port:
+              number: 3000
+  tls: 
+   - secretName: cert-manager-private-key
+     hosts:
+       - rvhelloweb3.com
+      
+grafana:
+  serviceName: grafana
+  namespace: monitoring
+  port: 80
+  ingress:
+    name: grafana-ingress
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: "cert-manager-global"  # ClusterIssuer name
+      kubernetes.io/ingress.class: "nginx"
+    hosts:
+      - host: "*.grafana.rvhelloweb3.com"
+        paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: grafana
+              port:
+                number: 80
+      - host: grafana.rvhelloweb3.com
+        paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: grafana
+              port:
+                number: 80
+    tls: 
+    - secretName: cert-manager-private-key
+      hosts:
+        - grafana.rvhelloweb3.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -73,7 +127,6 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 

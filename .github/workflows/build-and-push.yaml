@@ -29,13 +29,32 @@ jobs:
           docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest" .
           docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3/hello-web3:latest"
 
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0
+
       - name: Get GKE Credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
           --region us-central1 \
           --project ${{ secrets.GCP_PROJECT_ID }}
   
-      - name: Deploy to GKE
+      - name: Create API Key Secret
         run: |
-          kubectl apply -f k8s/
-          kubectl set image deployment/hello-web3 hello-web3=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/hello-web3/hello-web3:latest
+          kubectl create secret generic polygon-api-key \
+          --from-literal=POLYGON_API_KEY=${{ secrets.POLYGON_API_KEY }} \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install helloweb3 ./helm/helloWeb3 \
+          --namespace default \
+          --set image.tag=$GITHUB_SHA \
+          --set secret.secretKeyRefName=polygon-api-key \
+          --set service.type=LoadBalancer \
+          --set ingress.hosts[0].host=${{ secrets.DOMAIN_NAME }} \
+          --set ingress.hosts[1].host=app.${{ secrets.DOMAIN_NAME }} \
+          --set ingress.tls[0].hosts[0]=${{ secrets.DOMAIN_NAME }} \
+          --atomic \
+          --timeout 5m0s
