@@ -18,6 +18,11 @@ module "iam" {
   source     = "./modules/iam"
   project_id = var.project_id
   user_email = "gothrickz@gmail.com"  # Replace with user email
+
+  create_github_actions_sa     = true
+  github_actions_account_id    = "gha-deployer"  # Unique ID to avoid conflicts
+  github_actions_roles         = ["roles/container.developer", "roles/storage.admin", "roles/artifactregistry.writer"]
+  generate_github_actions_key  = true  # Only for testing; disable in productio
 }
 
 # Attach role binding to read-only IAM user for Kubernetes
@@ -29,4 +34,8 @@ module "rbac" {
 # Ensure RBAC depends on GKE cluster creation
 resource "null_resource" "dependency" {
   depends_on = [module.gke]
+}
+# Create repository in Google Container Registry
+module "gcr" {
+  source     = "./modules/gcr"
 }
