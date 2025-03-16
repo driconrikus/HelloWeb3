@@ -52,9 +52,4 @@ jobs:
           --namespace helloweb3 \
           --set image.tag=$GITHUB_SHA \
           --set secret.secretKeyRefName=polygon-api-key \
-          --set service.type=LoadBalancer \
-          --set ingress.hosts[0].host=${{ secrets.DOMAIN_NAME }} \
-          --set ingress.hosts[1].host=app.${{ secrets.DOMAIN_NAME }} \
-          --set ingress.tls[0].hosts[0]=${{ secrets.DOMAIN_NAME }} \
-          --atomic \
           --timeout 5m0s
