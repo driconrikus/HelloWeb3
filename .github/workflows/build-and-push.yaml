@@ -26,7 +26,7 @@ jobs:
 
       - name: Get GKE Credentials
         run: |
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+          gcloud container clusters get-credentials helloweb3-cluster \
           --region us-central1 \
           --project ${{ secrets.GCP_PROJECT }}
   
