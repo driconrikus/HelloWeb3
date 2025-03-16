@@ -10,10 +10,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Get short SHA
-        id: sha
-        run: echo "short_sha=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_OUTPUT
-
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v1
         with:
@@ -25,8 +21,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3:-${{ steps.sha.outputs.short_sha }}" .
-          docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3:-${{ steps.sha.outputs.short_sha }}"
+          docker build -t "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3" .
+          docker push "us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/hello-web3"
 
       - name: Deploy to GKE
         uses: google-github-actions/deploy-cloudrun@v1
