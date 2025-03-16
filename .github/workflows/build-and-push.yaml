@@ -49,7 +49,7 @@ jobs:
       - name: Deploy with Helm
         run: |
           helm upgrade --install helloweb3 ./helm/helloWeb3 \
-          --namespace default \
+          --namespace helloweb3 \
           --set image.tag=$GITHUB_SHA \
           --set secret.secretKeyRefName=polygon-api-key \
           --set service.type=LoadBalancer \
