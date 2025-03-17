@@ -1,13 +1,13 @@
 variable "dns_zone_name" {
     description = "The name of the DNS Zone"
     type = string
-    default = "rvhelloweb3-com-zone"
+    default = "rvtest-site"
 }
 
 variable "dns_name" {
     description = "The name of the DNS"
     type = string
-    default = "rvhelloweb3.com."
+    default = "rvtest.site."
 }
 
 variable "project_name" {

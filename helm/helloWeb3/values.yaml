@@ -64,7 +64,7 @@ ingress:
     kubernetes.io/ingress.class: "nginx"
     kubernetes.io/tls-acme: "true"
   hosts:
-    - host: "*.rvhelloweb3.com"
+    - host: "*.rvtest.site"
       paths:
       - pathType: Prefix
         path: /
@@ -73,7 +73,7 @@ ingress:
             name: helloweb3
             port:
               number: 3000
-    - host: rvhelloweb3.com
+    - host: rvtest.site
       paths:
       - pathType: Prefix
         path: /
@@ -85,7 +85,7 @@ ingress:
   tls: 
    - secretName: cert-manager-private-key
      hosts:
-       - rvhelloweb3.com
+       - rvtest.site
       
 grafana:
   serviceName: grafana
@@ -100,7 +100,7 @@ grafana:
       kubernetes.io/ingress.class: "nginx"
       kubernetes.io/tls-acme: "true"
     hosts:
-      - host: "*.grafana.rvhelloweb3.com"
+      - host: "*.grafana.rvtest.site"
         paths:
         - pathType: Prefix
           path: /
@@ -109,7 +109,7 @@ grafana:
               name: grafana
               port:
                 number: 80
-      - host: grafana.rvhelloweb3.com
+      - host: grafana.rvtest.site
         paths:
         - pathType: Prefix
           path: /
@@ -121,7 +121,7 @@ grafana:
     tls: 
     - secretName: cert-manager-private-key
       hosts:
-        - grafana.helloweb3.com
+        - grafana.rvtest.site
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
