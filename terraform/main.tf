@@ -40,6 +40,7 @@ module "gcr" {
   source     = "./modules/gcr"
 }
 
+# Module for certmanager -- given lack of time I had to copy this from somehere to make it easier
 module "cert_manager" {
   source        = "terraform-iaac/cert-manager/kubernetes"
   create_namespace = false
@@ -59,4 +60,9 @@ module "cert_manager" {
       }
     }
   ]
+}
+
+# Create DNS service
+module "dns" {
+  source = "./modules/dns"
 }
