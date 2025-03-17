@@ -12,6 +12,17 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+ip_allocation_policy {
+  cluster_secondary_range_name = "pods-ip-range"
+  services_secondary_range_name = "services-ip-range"
+}
+
+  addons_config {
+    http_load_balancing {
+      disabled = false
+    }
+  }
+
   cluster_autoscaling {
     enabled = true
     resource_limits {
@@ -24,3 +35,44 @@ resource "google_container_cluster" "cluster" {
     }
   }
 }
+
+resource "kubernetes_namespace" "monitoring" {
+  metadata {
+    name = "monitoring"
+  }
+}
+
+resource "kubernetes_namespace" "helloweb3" {
+  metadata {
+    name = "helloweb3"
+  }
+}
+
+resource "kubernetes_namespace" "nginx" {
+  metadata {
+    name = "nginx"
+  }
+}
+
+resource "kubernetes_namespace" "cert-manager" {
+  metadata {
+    name = "cert-manager"
+  }
+}
+
+resource "helm_release" "kube-prometheus" {
+  name       = "kube-prometheus-stackr"
+  namespace  = kubernetes_namespace.monitoring.metadata[0].name
+  repository = "https://prometheus-community.github.io/helm-charts"
+  version    = "25.24.1"
+  chart      = "prometheus"
+}
+
+resource "helm_release" "nginx_ingress" {
+  name       = "nginx-ingress"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  chart      = "ingress-nginx"
+  namespace  = "nginx"
+
+}
+
